@@ -39,10 +39,12 @@ export class AuthService {
     return this.afAuth
       .signInWithEmailAndPassword(email, password)
       .then((result) => {
-        this.ngZone.run(() => {
-          this.router.navigate(['dashboard']);
-        });
         this.SetUserData(result.user);
+        this.afAuth.authState.subscribe((user) => {
+          if (user) {
+            this.router.navigate(['dashboard']);
+          }
+        });
       })
       .catch((error) => {
         window.alert(error.message);
@@ -94,9 +96,7 @@ export class AuthService {
   // Sign in with Google
   GoogleAuth() {
     return this.AuthLogin(new auth.GoogleAuthProvider()).then((res: any) => {
-      if (res) {
-        this.router.navigate(['dashboard']);
-      }
+      this.router.navigate(['dashboard']);
     });
   }
 
@@ -105,9 +105,8 @@ export class AuthService {
     return this.afAuth
       .signInWithPopup(provider)
       .then((result) => {
-        this.ngZone.run(() => {
-          this.router.navigate(['dashboard']);
-        });
+        this.router.navigate(['dashboard']);
+
         this.SetUserData(result.user);
       })
       .catch((error) => {
